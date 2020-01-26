@@ -11,12 +11,15 @@ import requests
 import pandas as pd
 from alpha_vantage.timeseries import TimeSeries
 
+from mondb import MongoDatabase
+
 
 with open('keys.json') as f:
     data = json.load(f)
     username = data['myKeys']['mongodb_username']
     password = data['myKeys']['mongodb_password']
     alpha_key = data['myKeys']['alphavantage_api_key']
+
 
 def create_urls(file, base_url):
     """Create a url for each stock
@@ -62,21 +65,25 @@ def create_dict():
     """
     csv = 'stocks.csv'
     base_url = 'https://finance.yahoo.com/quote/STOCK/financials/'
-    stock_dict = {}
+    stock_dict = {'key': []}
     stocks = create_urls(csv, base_url)
     for stock in stocks:
+        document = {stock[0]: {'file': ''}, 'priceData': ''}
         print(f'Starting Stock {stock[0]}')
         # URL is stock[1]
         request = get_request(stock[1])
         # Ticker is stock[0]
         priceData = get_stock_data(stock[0])
         if request:
-            stock_dict[stock] = {'file': request.text}
+            document[stock[0]]['file'] = request.text
         if priceData:
-            stock_dict[stock] = priceData
+            document[stock[0]]['priceData'] = priceData
+        stock_dict['key'].append(document)
         # Every 4 calls to the get_weekly function need to be separated by one minute
         print(f'{stock[0]} extractions complete.')
+        return stock_dict
         time.sleep(15)
+
     return stock_dict
 
 
@@ -91,11 +98,27 @@ def get_stock_data(ticker):
     print(f'Getting stock data for: {ticker}')
     ts = TimeSeries(key=alpha_key)
     data = ts.get_weekly(ticker)
-    return {'priceData': data}
+    data = format(data)
+    return data
+
+def format(data):
+    """Format returned stock data to match mongodb standards"""
+    new_dict = {}
+    for k in data[0]:
+        new_dict[k] = {}
+        for key in data[0][k]:
+            tmp = data[0][k][key]
+            v = key.split(' ')[-1]
+            new_dict[k][v] = tmp
+    return new_dict
+
 
 
 def main():
     r = create_dict()
+    print(r)
+    db = MongoDatabase('Test2')
+    db.insert_document('stock', r)
     print(r)
 
 main()
