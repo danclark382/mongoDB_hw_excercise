@@ -2,6 +2,7 @@
   "myKeys": {
     "mongodb_username": "INSERT MONGODB USERNAME",
     "mongodb_password": "INSERT MONGODB PASSWORD",
-    "alphavantage_api_key": "INSERT ALPHA VANTAGE API KEY"
+    "alphavantage_api_key": "INSERT ALPHA VANTAGE API KEY",
+    "connection_uri": "Insert Connection URI"
   }
 }

@@ -70,8 +70,15 @@
 8. On the top left ribbon of Compass, click Connect, then Connect To
 9. MongoDB will detect the connection string in your clipboard and fill out the form
 10. Enter your password, then click Connect
-11. This connection will be available under the recents category when you reopen Compass
+11. This connection will be available under the recent category when you reopen Compass
 12. For troubleshooting, visit [Here](https://docs.atlas.mongodb.com/compass-connection/)
+## Connect MongoDB Atlas to Python
+1. Go to the homepage of your Atlas Cloud
+2. From the left panel, click Clusters under Atlas
+3. Under your cluster name in the sandbox section, click Connect
+4. Click Connect to Application
+5. Under Driver click Python, then input your Python version
+6. Copy the Connection String and input it into the connection_uri key in keys.json
 ## Get your API key
 1. Navigate [Here](https://www.alphavantage.co/support/#api-key)
 2. Fill out the form and click Get Free API Key
